@@ -8,7 +8,7 @@ import { ChangeEventHandler, useCallback, useState } from 'react';
  * @param {(value: string) => string} [transformValue=(v: string) => v] - A function to transform the input value.
  *   Defaults to an identity function that returns the input unchanged.
  *
- * @returns {[value: string, onChange: (value: string) => void]} A tuple containing:
+ * @returns {[value: string, onChange: ChangeEventHandler<HTMLElement & { value: string }>]} A tuple containing:
  * - value `string` - The current state value;
  * - onChange `(value: string) => void` - A function to update the state;
  *
