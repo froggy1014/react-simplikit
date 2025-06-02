@@ -58,14 +58,14 @@ describe('useConditionalEffect', () => {
     const condition = vi.fn(() => true);
 
     const { rerender } = await renderHookSSR(({ deps }) => useConditionalEffect(effect, deps, condition), {
-      initialProps: { deps: [1] as const },
+      initialProps: { deps: [1] },
     });
 
     expect(effect).toHaveBeenCalledTimes(1);
 
     effect.mockClear();
     await act(async () => {
-      rerender({ deps: [2] as const });
+      rerender({ deps: [2] });
     });
 
     expect(condition).toHaveBeenCalledWith([1], [2]);
@@ -73,7 +73,7 @@ describe('useConditionalEffect', () => {
 
     effect.mockClear();
     await act(async () => {
-      rerender({ deps: [3] as const });
+      rerender({ deps: [3] });
     });
 
     expect(condition).toHaveBeenCalledWith([2], [3]);
@@ -97,7 +97,7 @@ describe('useConditionalEffect', () => {
     const condition = vi.fn(() => false);
 
     const { rerender } = await renderHookSSR(({ deps }) => useConditionalEffect(effect, deps, condition), {
-      initialProps: { deps: [1] as const },
+      initialProps: { deps: [1] },
     });
 
     expect(condition).toHaveBeenCalledWith(undefined, [1]);
@@ -105,7 +105,7 @@ describe('useConditionalEffect', () => {
     condition.mockClear();
 
     await act(async () => {
-      rerender({ deps: [2] as const });
+      rerender({ deps: [2] });
     });
 
     expect(condition).toHaveBeenCalledWith([1], [2]);
