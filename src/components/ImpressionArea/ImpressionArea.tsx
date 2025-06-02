@@ -1,12 +1,16 @@
-import { ElementType, forwardRef, ReactNode, Ref } from 'react';
+import { ElementType, forwardRef, ReactNode, Ref, RefCallback } from 'react';
 
 import { useImpressionRef, UseImpressionRefOptions } from '../../hooks/useImpressionRef/index.ts';
 import { mergeRefs } from '../../utils/mergeRefs/mergeRefs.ts';
 
+type Element<
+  T extends ElementType,
+  InstrinsicElements = T extends keyof React.JSX.IntrinsicElements ? React.JSX.IntrinsicElements[T] : HTMLElement,
+> = InstrinsicElements extends React.ClassAttributes<infer E extends HTMLElement> ? E : HTMLElement;
+
 type Props<Tag extends ElementType> = React.ComponentPropsWithoutRef<Tag> &
   UseImpressionRefOptions & {
     as?: Tag;
-    ref?: Ref<HTMLElement>;
     children?: ReactNode;
     className?: string;
   };
@@ -17,13 +21,14 @@ type Props<Tag extends ElementType> = React.ComponentPropsWithoutRef<Tag> &
  * and executes callbacks when the element enters or exits the viewport. This component uses the `useImpressionRef`
  * hook to track the element's visibility.
  *
- * @param {ElementType} [as='div'] - The HTML tag to render. Defaults to `div`.
+ * @template {ElementType} T - The HTML tag to render. Defaults to `div`.
+ * @param {T} [as='div'] - The HTML tag to render. Defaults to `div`.
  * @param {string} [rootMargin] - Margin to adjust the detection area.
  * @param {number} [areaThreshold] - Minimum ratio of the element that must be visible (0 to 1).
  * @param {number} [timeThreshold] - Minimum time the element must be visible (in milliseconds).
  * @param {() => void} [onImpressionStart] - Callback function executed when the element enters the view.
  * @param {() => void} [onImpressionEnd] - Callback function executed when the element exits the view.
- * @param {Ref<HTMLElement>} [ref] - Reference to the element.
+ * @param {Ref<Element<T>>} [ref] - Reference to the element.
  * @param {React.ReactNode} [children] - Child elements to be rendered inside the component.
  * @param {string} [className] - Additional class names for styling.
  *
@@ -43,22 +48,26 @@ type Props<Tag extends ElementType> = React.ComponentPropsWithoutRef<Tag> &
  *   );
  * }
  */
-export const ImpressionArea = forwardRef(
-  <T extends ElementType = 'div'>(
-    { as, rootMargin, areaThreshold, timeThreshold, onImpressionStart, onImpressionEnd, ...props }: Props<T>,
-    ref: React.Ref<Element>
-  ) => {
-    const Component = as ?? 'div';
-    const impressionRef = useImpressionRef<HTMLElement>({
-      onImpressionStart,
-      onImpressionEnd,
-      areaThreshold,
-      timeThreshold,
-      rootMargin,
-    });
+export const ImpressionArea = forwardRef(ImpressionAreaImpl) as <T extends ElementType = 'div'>(
+  props: Props<T> & { ref?: Ref<Element<T>> }
+) => React.ReactNode;
 
-    return <Component ref={mergeRefs(ref, impressionRef)} {...props} />;
-  }
-);
+function ImpressionAreaImpl<T extends ElementType = 'div'>(
+  { as, rootMargin, areaThreshold, timeThreshold, onImpressionStart, onImpressionEnd, ...props }: Props<T>,
+  ref: Ref<unknown>
+) {
+  const Component = as ?? 'div';
+  const impressionRef = useImpressionRef<Element<T>>({
+    onImpressionStart,
+    onImpressionEnd,
+    areaThreshold,
+    timeThreshold,
+    rootMargin,
+  });
 
-ImpressionArea.displayName = 'ImpressionArea';
+  return <Component ref={mergeRefs(ref, impressionRef) as RefCallback<HTMLElement>} {...props} />;
+}
+
+Object.assign(ImpressionArea, {
+  displayName: 'ImpressionArea',
+});
