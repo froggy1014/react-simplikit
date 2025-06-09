@@ -1,13 +1,13 @@
 # useLongPress
 
-`useLongPress`는 요소가 지정된 시간 동안 눌리고 유지되는 것을 감지하는 리액트 훅이에요. 마우스와 터치 이벤트를 모두 처리하여 데스크톱과 모바일 기기에서 일관되게 작동해요.
+`useLongPress`는 요소가 지정된 기간 동안 눌려지고 유지될 때를 감지하는 리액트 훅이에요. 마우스와 터치 이벤트를 모두 처리하여 데스크탑과 모바일 장치에서 일관되게 작동해요.
 
-## 인터페이스
+## Interface
 
 ```ts
 function useLongPress<E extends HTMLElement>(
   onLongPress: (event: React.MouseEvent<E> | React.TouchEvent<E>) => void,
-  options: UseOptionsObject
+  options: UseLongPressOptions
 ): Object;
 ```
 
@@ -17,51 +17,54 @@ function useLongPress<E extends HTMLElement>(
   required
   name="onLongPress"
   type="(event: React.MouseEvent<E> | React.TouchEvent<E>) => void"
-  description="길게 누르기가 감지될 때 실행되는 콜백 함수예요."
+  description="길게 누름이 감지되었을 때 실행될 콜백 함수예요."
 />
+
 <Interface
   name="options"
-  type="Object"
-  description="길게 누르기 동작을 설정하는 옵션이에요."
+  type="UseLongPressOptions"
+  description="길게 누름 동작을 위한 설정 옵션이에요."
   :nested="[
     {
       name: 'options.delay',
       type: 'number',
       required: false,
       defaultValue: '500',
-      description: '길게 누르기를 트리거하기 전 시간(밀리초)이에요. 기본값은 500ms예요.'
+      description:
+        '길게 누름을 시작하기 전에 대기할 밀리초(ms) 단위의 시간이에요. 기본값은 500ms예요.',
     },
     {
       name: 'options.moveThreshold',
       type: 'Object',
       required: false,
-      description: '길게 누르기를 취소하기 전에 허용되는 최대 이동 거리예요.'
+      description: '길게 누름을 취소하기 전에 허용되는 최대 움직임이에요.',
     },
     {
       name: 'options.moveThreshold.x',
       type: 'number',
       required: false,
-      description: '최대 수평 이동 거리(픽셀)예요.'
+      description: '최대 수평 움직임을 픽셀 단위로 설정해요.',
     },
     {
       name: 'options.moveThreshold.y',
       type: 'number',
       required: false,
-      description: '최대 수직 이동 거리(픽셀)예요.'
+      description: '최대 수직 움직임을 픽셀 단위로 설정해요.',
     },
     {
       name: 'options.onClick',
       type: '(event) => void',
       required: false,
-      description: '일반 클릭(지연 시간 전에 누르고 떼기)에 실행되는 선택적 함수예요.'
+      description:
+        '일반 클릭(지연 전에 눌렀다 놓기) 시 실행할 선택적 함수예요.',
     },
     {
       name: 'options.onLongPressEnd',
       type: '(event) => void',
       required: false,
-      description: '길게 누르기가 끝날 때 실행되는 선택적 함수예요.'
-    }
-    ]"
+      description: '길게 누름이 끝났을 때 실행할 선택적 함수예요.',
+    },
+  ]"
 />
 
 ### 반환 값
@@ -69,64 +72,38 @@ function useLongPress<E extends HTMLElement>(
 <Interface
   name=""
   type="Object"
-  description="JSX 요소에 전달할 이벤트 핸들러가 포함된 객체예요."
+  description="요소에 첨부할 핸들러들을 제공해요."
   :nested="[
     {
       name: 'onMouseDown',
-      type: 'function',
-      description: '마우스 다운 이벤트 핸들러예요.'
+      type: '(event: MouseEvent<E> | TouchEvent<E>) => void',
+      required: false,
+      description:
+        '마우스 다운 이벤트에 대한 이벤트 핸들러예요. - onMouseUp <code>(event<br />  : MouseEvent<E> | TouchEvent<E>) => void</code> - 마우스 업 이벤트에 대한 이벤트 핸들러예요. - onMouseLeave <code>(event<br />  : MouseEvent<E> | TouchEvent<E>) => void</code> - 마우스 리브 이벤트에 대한 이벤트 핸들러예요. - onTouchStart <code>(event<br />  : MouseEvent<E> | TouchEvent<E>) => void</code> - 터치 시작 이벤트에 대한 이벤트 핸들러예요. - onTouchEnd <code>(event<br />  : MouseEvent<E> | TouchEvent<E>) => void</code> - 터치 종료 이벤트에 대한 이벤트 핸들러예요. - onMouseMove <code>(event<br />  : MouseEvent<E> | TouchEvent<E>) => void</code> - 마우스 이동 이벤트에 대한 이벤트 핸들러예요. 만약 <code>moveThreshold</code>가 제공되면 포함돼요. - onTouchMove <code>(event<br />  : MouseEvent<E> | TouchEvent<E>) => void</code> - 터치 이동 이벤트에 대한 이벤트 핸들러예요. 만약 <code>moveThreshold</code>가 제공되면 포함돼요.',
     },
-    {
-      name: 'onMouseUp',
-      type: 'function',
-      description: '마우스 업 이벤트 핸들러예요.'
-    },
-    {
-      name: 'onMouseLeave',
-      type: 'function',
-      description: '마우스 리브 이벤트 핸들러예요.'
-    },
-    {
-      name: 'onTouchStart',
-      type: 'function',
-      description: '터치 시작 이벤트 핸들러예요.'
-    },
-    {
-      name: 'onTouchEnd',
-      type: 'function',
-      description: '터치 종료 이벤트 핸들러예요.'
-    },
-    {
-      name: 'onTouchMove',
-      type: 'function',
-      description: '터치 이동 이벤트 핸들러예요 (moveThreshold가 지정된 경우에만 포함).'
-    },
-    {
-      name: 'onMouseMove',
-      type: 'function',
-      description: '마우스 이동 이벤트 핸들러예요 (moveThreshold가 지정된 경우에만 포함).'
-    }
-    ]"
+  ]"
 />
 
 ## 예시
 
 ```tsx
 import { useLongPress } from 'react-simplikit';
-import { useState } from 'react';
 
 function ContextMenu() {
   const [menuVisible, setMenuVisible] = useState(false);
 
-  const longPressHandlers = useLongPress(() => setMenuVisible(true), {
-    delay: 400,
-    onClick: () => console.log('일반 클릭'),
-    onLongPressEnd: () => console.log('길게 누르기 완료'),
-  });
+  const longPressHandlers = useLongPress(
+    () => setMenuVisible(true),
+    {
+      delay: 400,
+      onClick: () => console.log('일반 클릭'),
+      onLongPressEnd: () => console.log('길게 누름 완료')
+    }
+  );
 
   return (
     <div>
-      <button {...longPressHandlers}>길게 누르세요</button>
+      <button {...longPressHandlers}>눌러서 유지해보세요</button>
       {menuVisible && <div className="context-menu">컨텍스트 메뉴</div>}
     </div>
   );

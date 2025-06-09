@@ -8,7 +8,7 @@
 function useInputState(
   initialValue: string = '',
   transformValue: (value: string) => string = (v: string) => v
-): [value: string, onChange: (value: string) => void];
+): [value: string, onChange: ChangeEventHandler<HTMLInputElement>];
 ```
 
 ### 파라미터
@@ -29,7 +29,7 @@ function useInputState(
 
 <Interface
   name=""
-  type="[value: string, onChange: (value: string) => void]"
+  type="[value: string, onChange: ChangeEventHandler<HTMLInputElement>]"
   description="튜플을 포함해요:"
   :nested="[
     {
@@ -39,7 +39,7 @@ function useInputState(
     },
     {
       name: 'onChange',
-      type: '(value: string) => void',
+      type: 'ChangeEventHandler<HTMLInputElement>',
       description: '상태를 업데이트하는 함수예요.',
     },
   ]"
@@ -49,7 +49,7 @@ function useInputState(
 
 ```tsx
 function Example() {
-  const [value, setValue] = useInputState('');
-  return <input type="text" value={value} onChange={setValue} />;
+  const [value, onChange] = useInputState('');
+  return <input type="text" value={value} onChange={onChange} />;
 }
 ```
