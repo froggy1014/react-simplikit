@@ -1,4 +1,4 @@
-import { ChangeEventHandler, useCallback, useState } from 'react';
+import { ChangeEvent, ChangeEventHandler, useCallback, useState } from 'react';
 
 /**
  * @description
@@ -8,21 +8,21 @@ import { ChangeEventHandler, useCallback, useState } from 'react';
  * @param {(value: string) => string} [transformValue=(v: string) => v] - A function to transform the input value.
  *   Defaults to an identity function that returns the input unchanged.
  *
- * @returns {[value: string, onChange: (value: string) => void]} A tuple containing:
+ * @returns {[value: string, onChange: ChangeEventHandler<HTMLInputElement>]} A tuple containing:
  * - value `string` - The current state value;
- * - onChange `(value: string) => void` - A function to update the state;
+ * - onChange `ChangeEventHandler<HTMLInputElement>` - A function to update the state;
  *
  * @example
  * function Example() {
- *   const [value, setValue] = useInputState('');
- *   return <input type="text" value={value} onChange={setValue} />;
+ *   const [value, onChange] = useInputState('');
+ *   return <input type="text" value={value} onChange={onChange} />;
  * }
  */
 export function useInputState(initialValue = '', transformValue: (value: string) => string = echo) {
   const [value, setValue] = useState(initialValue);
 
-  const handleValueChange: ChangeEventHandler<HTMLElement & { value: string }> = useCallback(
-    ({ target: { value } }) => {
+  const handleValueChange: ChangeEventHandler<HTMLInputElement> = useCallback(
+    ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
       setValue(transformValue(value));
     },
     [transformValue]

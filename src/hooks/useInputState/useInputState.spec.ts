@@ -8,13 +8,13 @@ import { useInputState } from './useInputState.ts';
 
 function createTestInput(...params: Parameters<typeof useInputState>) {
   return function Input() {
-    const [value, handleValueChange] = useInputState(...params);
+    const [value, onChange] = useInputState(...params);
 
     return createElement('input', {
       'data-testid': 'input',
       type: 'text',
       value,
-      onChange: handleValueChange,
+      onChange,
     });
   };
 }
